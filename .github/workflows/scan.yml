@@ -2,7 +2,7 @@ name: RegMat Scanner
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -48,3 +48,13 @@ jobs:
           git add data.json
           git commit -m "scan $(date -u '+%Y-%m-%d %H:%M UTC')" || true
           git push || true
+
+      - name: Wait 5 minutes then trigger next scan
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          echo "Waiting 5 minutes before next scan..."
+          sleep 300
+          gh workflow run scan.yml --repo ${{ github.repository }}
+          echo "Next scan triggered"
+        continue-on-error: true
