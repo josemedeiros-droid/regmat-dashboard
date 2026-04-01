@@ -2,7 +2,7 @@
   "demands": [
     {
       "id": "RM-2026-027",
-      "timestamp": "2026-04-01 18:20",
+      "timestamp": "2026-04-01 15:20",
       "type": "mention",
       "from": "Jose Medeiros",
       "channel": "teste-regmat3",
@@ -379,6 +379,6 @@
       "message_ts": "1774634051.093599"
     }
   ],
-  "last_scan": "2026-04-01 18:23:47 UTC",
-  "scan_count": 187
+  "last_scan": "2026-04-01 15:26:53",
+  "scan_count": 198
 }
