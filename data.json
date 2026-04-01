@@ -1,6 +1,62 @@
 {
   "demands": [
     {
+      "id": "RM-2026-032",
+      "timestamp": "2026-04-01 15:54",
+      "type": "mention",
+      "from": "Jose Medeiros",
+      "channel": "teste-regmat3",
+      "criticality": null,
+      "due_date": null,
+      "summary": null,
+      "preview": "teste thread 12:54",
+      "status": "Novo",
+      "permalink": "https://nubank.slack.com/archives/C0AQCN3LYTE/p1775058895985209?thread_ts=1775058885.307169&cid=C0AQCN3LYTE",
+      "message_ts": "1775058895.985209"
+    },
+    {
+      "id": "RM-2026-031",
+      "timestamp": "2026-04-01 18:49",
+      "type": "mention",
+      "from": "Jose Medeiros",
+      "channel": "teste-regmat3",
+      "criticality": null,
+      "due_date": null,
+      "summary": null,
+      "preview": "teste 15:49 thread",
+      "status": "Novo",
+      "permalink": "https://nubank.slack.com/archives/C0AQCN3LYTE/p1775069382052639?thread_ts=1775067605.227259&cid=C0AQCN3LYTE",
+      "message_ts": "1775069382.052639"
+    },
+    {
+      "id": "RM-2026-030",
+      "timestamp": "2026-04-01 18:49",
+      "type": "mention",
+      "from": "Jose Medeiros",
+      "channel": "teste-regmat3",
+      "criticality": null,
+      "due_date": null,
+      "summary": null,
+      "preview": "teste 15:50 thread",
+      "status": "Novo",
+      "permalink": "https://nubank.slack.com/archives/C0AQCN3LYTE/p1775069375709719?thread_ts=1775067605.227259&cid=C0AQCN3LYTE",
+      "message_ts": "1775069375.709719"
+    },
+    {
+      "id": "RM-2026-029",
+      "timestamp": "2026-04-01 18:31",
+      "type": "mention",
+      "from": "Jose Medeiros",
+      "channel": "teste-regmat3",
+      "criticality": null,
+      "due_date": null,
+      "summary": null,
+      "preview": "teste 15:31 thread",
+      "status": "Novo",
+      "permalink": "https://nubank.slack.com/archives/C0AQCN3LYTE/p1775068312969629?thread_ts=1775067605.227259&cid=C0AQCN3LYTE",
+      "message_ts": "1775068312.969629"
+    },
+    {
       "id": "RM-2026-028",
       "timestamp": "2026-04-01 15:32",
       "type": "mention",
@@ -393,6 +449,6 @@
       "message_ts": "1774634051.093599"
     }
   ],
-  "last_scan": "2026-04-01 16:05:32",
-  "scan_count": 236
+  "last_scan": "2026-04-01 19:05:48 UTC",
+  "scan_count": 237
 }
