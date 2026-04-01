@@ -259,10 +259,21 @@ async function loadData() {
   }
 }
 
+function utcToLocal(utcStr) {
+  if (!utcStr) return '—';
+  const clean = utcStr.replace(' UTC', '').replace('UTC', '').trim();
+  const d = new Date(clean + 'Z');
+  if (isNaN(d)) return utcStr;
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate())
+       + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
 function renderAll(data) {
-  document.getElementById('lastScan').textContent = 'Último scan: ' + (data.last_scan || '—');
+  const localTime = utcToLocal(data.last_scan);
+  document.getElementById('lastScan').textContent = 'Último scan: ' + localTime;
   document.getElementById('scanCount').textContent = 'Scans: ' + (data.scan_count || 0);
-  document.getElementById('footerUpdate').textContent = 'Última atualização: ' + (data.last_scan || '—');
+  document.getElementById('footerUpdate').textContent = 'Última atualização: ' + localTime;
 
   renderOverview();
   renderDistributions();

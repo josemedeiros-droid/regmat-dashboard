@@ -112,6 +112,60 @@ def main():
     user_cache: dict[str, str] = {}
     new_count = 0
 
+    def _process(msg, channel_id, channel_name, is_thread=False):
+        nonlocal new_count
+        text = msg.get("text", "")
+        if msg.get("subtype") or not mentions_group(text):
+            return
+        if msg["ts"] in existing_ts:
+            return
+
+        user_id = msg.get("user", "unknown")
+        author = get_user_name(client, user_id, user_cache)
+        permalink = get_permalink(client, channel_id, msg["ts"])
+        ts_dt = datetime.fromtimestamp(float(msg["ts"]))
+        protocol_id = next_protocol_id(existing_ids)
+        existing_ids.append(protocol_id)
+        source = f"#{channel_name}" + (" (thread)" if is_thread else "")
+
+        if INTAKE_MARKER in text:
+            fields = extract_fields(text)
+            demand = {
+                "id": protocol_id,
+                "timestamp": ts_dt.strftime("%Y-%m-%d %H:%M"),
+                "type": "demand",
+                "from": author,
+                "channel": channel_name,
+                "criticality": fields.get("criticidade"),
+                "due_date": fields.get("prazo_formal"),
+                "summary": fields.get("escopo"),
+                "preview": clean_preview(text),
+                "status": "Novo",
+                "permalink": permalink,
+                "message_ts": msg["ts"],
+                "fields": fields,
+            }
+        else:
+            demand = {
+                "id": protocol_id,
+                "timestamp": ts_dt.strftime("%Y-%m-%d %H:%M"),
+                "type": "mention",
+                "from": author,
+                "channel": channel_name,
+                "criticality": None,
+                "due_date": None,
+                "summary": None,
+                "preview": clean_preview(text),
+                "status": "Novo",
+                "permalink": permalink,
+                "message_ts": msg["ts"],
+            }
+
+        data["demands"].insert(0, demand)
+        existing_ts.add(msg["ts"])
+        new_count += 1
+        print(f"  + {demand['type']} from {author} in {source}")
+
     for ch in WATCH_CHANNELS:
         channel_id, channel_name = ch["id"], ch["name"]
 
@@ -130,65 +184,29 @@ def main():
             print(f"  Error reading #{channel_name}: {exc.response['error']}")
             continue
 
-        messages = result.get("messages", [])
-        if not messages:
-            continue
+        new_messages = result.get("messages", [])
 
-        messages.sort(key=lambda m: float(m["ts"]))
+        for msg in sorted(new_messages, key=lambda m: float(m["ts"])):
+            _process(msg, channel_id, channel_name)
 
-        for msg in messages:
-            text = msg.get("text", "")
-            if msg.get("subtype"):
-                continue
-            if not mentions_group(text):
-                continue
-            if msg["ts"] in existing_ts:
-                continue
+        try:
+            recent = client.conversations_history(channel=channel_id, limit=30)
+            recent_msgs = recent.get("messages", [])
+        except SlackApiError:
+            recent_msgs = new_messages
 
-            user_id = msg.get("user", "unknown")
-            author = get_user_name(client, user_id, user_cache)
-            permalink = get_permalink(client, channel_id, msg["ts"])
-            ts_dt = datetime.fromtimestamp(float(msg["ts"]))
-            protocol_id = next_protocol_id(existing_ids)
-            existing_ids.append(protocol_id)
-
-            if INTAKE_MARKER in text:
-                fields = extract_fields(text)
-                demand = {
-                    "id": protocol_id,
-                    "timestamp": ts_dt.strftime("%Y-%m-%d %H:%M"),
-                    "type": "demand",
-                    "from": author,
-                    "channel": channel_name,
-                    "criticality": fields.get("criticidade"),
-                    "due_date": fields.get("prazo_formal"),
-                    "summary": fields.get("escopo"),
-                    "preview": clean_preview(text),
-                    "status": "Novo",
-                    "permalink": permalink,
-                    "message_ts": msg["ts"],
-                    "fields": fields,
-                }
-            else:
-                demand = {
-                    "id": protocol_id,
-                    "timestamp": ts_dt.strftime("%Y-%m-%d %H:%M"),
-                    "type": "mention",
-                    "from": author,
-                    "channel": channel_name,
-                    "criticality": None,
-                    "due_date": None,
-                    "summary": None,
-                    "preview": clean_preview(text),
-                    "status": "Novo",
-                    "permalink": permalink,
-                    "message_ts": msg["ts"],
-                }
-
-            data["demands"].insert(0, demand)
-            existing_ts.add(msg["ts"])
-            new_count += 1
-            print(f"  + {demand['type']} from {author} in #{channel_name}")
+        for msg in recent_msgs:
+            if msg.get("reply_count", 0) > 0:
+                try:
+                    replies = client.conversations_replies(
+                        channel=channel_id, ts=msg["ts"], limit=200,
+                    )
+                    for reply in replies.get("messages", []):
+                        if reply["ts"] == msg["ts"]:
+                            continue
+                        _process(reply, channel_id, channel_name, is_thread=True)
+                except SlackApiError:
+                    pass
 
     data["last_scan"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     data["scan_count"] = data.get("scan_count", 0) + 1
