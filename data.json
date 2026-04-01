@@ -1,6 +1,48 @@
 {
   "demands": [
     {
+      "id": "RM-2026-019",
+      "timestamp": "2026-04-01 12:35",
+      "type": "mention",
+      "from": "Jose Medeiros",
+      "channel": "teste-regmat3",
+      "criticality": null,
+      "due_date": null,
+      "summary": null,
+      "preview": "teste 12:35",
+      "status": "Novo",
+      "permalink": "https://nubank.slack.com/archives/C0AQCN3LYTE/p1775057749521289",
+      "message_ts": "1775057749.521289"
+    },
+    {
+      "id": "RM-2026-018",
+      "timestamp": "2026-04-01 12:35",
+      "type": "mention",
+      "from": "Jose Medeiros",
+      "channel": "teste-regmat2",
+      "criticality": null,
+      "due_date": null,
+      "summary": null,
+      "preview": "teste 12:35",
+      "status": "Novo",
+      "permalink": "https://nubank.slack.com/archives/C0AQCN18Q0L/p1775057745873779",
+      "message_ts": "1775057745.873779"
+    },
+    {
+      "id": "RM-2026-017",
+      "timestamp": "2026-04-01 12:35",
+      "type": "mention",
+      "from": "Jose Medeiros",
+      "channel": "teste-regmat",
+      "criticality": null,
+      "due_date": null,
+      "summary": null,
+      "preview": "teste 12:35",
+      "status": "Novo",
+      "permalink": "https://nubank.slack.com/archives/C0APAM34JT0/p1775057740922549",
+      "message_ts": "1775057740.922549"
+    },
+    {
       "id": "RM-2026-016",
       "timestamp": "2026-04-01 12:33",
       "type": "mention",
@@ -225,6 +267,6 @@
       "message_ts": "1774634051.093599"
     }
   ],
-  "last_scan": "2026-04-01 12:34:57",
-  "scan_count": 109
+  "last_scan": "2026-04-01 12:35:58",
+  "scan_count": 110
 }
