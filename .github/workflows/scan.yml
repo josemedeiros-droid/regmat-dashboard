@@ -11,6 +11,9 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    concurrency:
+      group: scanner
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
 
@@ -23,13 +26,25 @@ jobs:
       - name: Run scanner
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_REFRESH_TOKEN: ${{ secrets.SLACK_REFRESH_TOKEN }}
         run: python scan.py
 
-      - name: Commit and push
+      - name: Update secrets if token was refreshed
+        if: hashFiles('tokens_updated.json') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          NEW_ACCESS=$(python -c "import json; print(json.load(open('tokens_updated.json'))['access_token'])")
+          NEW_REFRESH=$(python -c "import json; print(json.load(open('tokens_updated.json'))['refresh_token'])")
+          gh secret set SLACK_TOKEN --repo ${{ github.repository }} --body "$NEW_ACCESS"
+          gh secret set SLACK_REFRESH_TOKEN --repo ${{ github.repository }} --body "$NEW_REFRESH"
+          rm tokens_updated.json
+          echo "Secrets updated with refreshed tokens"
+
+      - name: Commit and push data
         run: |
           git config user.name "regmat-bot"
           git config user.email "regmat-bot@users.noreply.github.com"
           git add data.json
-          git diff --staged --quiet && echo "No changes" && exit 0
-          git commit -m "scan $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git push
+          git commit -m "scan $(date -u '+%Y-%m-%d %H:%M UTC')" || true
+          git push || true
